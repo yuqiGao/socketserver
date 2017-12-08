@@ -17,12 +17,9 @@ public class Socketclient {
 		while (true) {
 			Socket socket = null;
 			try {
-				// 创建一个流套接字并将其连接到指定主机上的指定端口号
 				socket = new Socket(IP_ADDR, PORT);
 
-				// 读取服务器端数据
 				DataInputStream input = new DataInputStream(socket.getInputStream());
-				// 向服务器端发送数据
 				DataOutputStream out = new DataOutputStream(socket.getOutputStream());
 				System.out.print("请输入: \t");
 				String str = new BufferedReader(new InputStreamReader(System.in)).readLine();
