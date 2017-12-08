@@ -43,7 +43,7 @@ public class Socketserver {
 				String clientInputStr = input.readUTF();
 				System.out.println("Message from client:" + clientInputStr);
 				DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-				out.writeUTF("Server'" + clientInputStr + "'\n");
+				out.writeUTF("Server:" + clientInputStr + "\n");
 				String s = new BufferedReader(new InputStreamReader(System.in)).readLine();
 				out.writeUTF(s);
 
