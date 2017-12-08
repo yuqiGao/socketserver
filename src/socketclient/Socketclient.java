@@ -13,7 +13,7 @@ public class Socketclient {
 
 	public static void main(String[] args) {
 		System.out.println("客户端启动...");
-		System.out.println("当接收到服务器端字符为 \"OK\" 的时候, 客户端将终止\n");
+		System.out.println("当接收到服务器端字符为 \"Stop Server\" 的时候, 客户端将终止\n");
 		while (true) {
 			Socket socket = null;
 			try {
@@ -28,9 +28,9 @@ public class Socketclient {
 				String ret = input.readUTF();
 				System.out.println("服务器端返回过来的是: " + ret);
 				// 如接收到 "OK" 则断开连接
-				if ("OK".equals(ret)) {
+				if ("Stop Server".equals(ret)) {
 					System.out.println("客户端将关闭连接");
-					Thread.sleep(500);
+					Thread.sleep(50);
 					break;
 				}
 
