@@ -1,14 +1,18 @@
 package socketserver;
 
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.InputStreamReader;
+import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Socketserver {
-	public static final int PORT = 12345;// 监听的端口号
+	public static final int PORT = 12345;
+	public static final String WEB_ROOT = System.getProperty("user.dir") + File.separator + "webroot";
+	private static final String SHUTDOWN_COMMAND = "/SHUTDOWN";
+	// the shutdown command received
+	private boolean shutdown = false;
 
 	public static void main(String[] args) {
 		System.out.println("Starting Server...\n");
@@ -18,7 +22,8 @@ public class Socketserver {
 
 	public void init() {
 		try {
-			ServerSocket serverSocket = new ServerSocket(PORT);
+			// ServerSocket serverSocket = new ServerSocket(PORT);
+			ServerSocket serverSocket = new ServerSocket(PORT, 1, InetAddress.getByName("127.0.0.1"));
 			while (true) {
 				Socket client = serverSocket.accept();
 				new HandlerThread(client);
@@ -38,17 +43,36 @@ public class Socketserver {
 
 		public void run() {
 			try {
-				// 读取客户端数据
-				DataInputStream input = new DataInputStream(socket.getInputStream());
-				String clientInputStr = input.readUTF();
-				System.out.println("Message from client:" + clientInputStr);
-				DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-				out.writeUTF("Server:" + clientInputStr + "\n");
-				String s = new BufferedReader(new InputStreamReader(System.in)).readLine();
-				out.writeUTF(s);
+				// DataInputStream input = new
+				// DataInputStream(socket.getInputStream());
+				// String clientInputStr = input.readUTF();
+				// System.out.println("Message from client:" + clientInputStr);
+				// DataOutputStream out = new
+				// DataOutputStream(socket.getOutputStream());
+				// out.writeUTF("Server:" + clientInputStr + "\n");
+				// String s = new BufferedReader(new
+				// InputStreamReader(System.in)).readLine();
+				// out.writeUTF(s);
+				//
+				// out.close();
+				// input.close();
+				InputStream input = socket.getInputStream();
+				OutputStream output = socket.getOutputStream();
 
-				out.close();
-				input.close();
+				// create Request object and parse
+				Request request = new Request(input);
+				request.parse();
+
+				// create Response object
+				Response response = new Response(output);
+				response.setRequest(request);
+				response.sendStaticResource();
+
+				// Close the socket
+				socket.close();
+				// check if the previous URI is a shutdown command
+				shutdown = request.getUri().equals(SHUTDOWN_COMMAND);
+
 			} catch (Exception e) {
 				System.out.println(e.getMessage());
 			} finally {
