@@ -25,8 +25,10 @@ public class Request {
 		for (int j = 0; j < i; j++) {
 			request.append((char) buffer[j]);
 		}
-		System.out.print(request.toString());
+//		System.out.print(request.toString());
+		System.out.println("fileContent : "+request.toString());
 		uri = parseUri(request.toString());
+		System.out.println("uri is :" + uri);
 	}
 
 	private String parseUri(String requestString) {

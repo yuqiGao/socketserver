@@ -1,8 +1,6 @@
 package socketserver;
 
-import java.io.File;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -66,7 +64,9 @@ public class Socketserver {
 				// create Response object
 				Response response = new Response(output);
 				response.setRequest(request);
-				response.sendStaticResource();
+//				response.sendStaticResource();
+				response.downLoadResource(socket);
+
 
 				// Close the socket
 				socket.close();
@@ -83,6 +83,42 @@ public class Socketserver {
 						socket = null;
 						System.out.println(e.getMessage());
 					}
+				}
+			}
+		}
+
+
+
+
+		private void closeSocket(Socket socket) {
+			try {
+				socket.close();
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+			System.out.println(socket + "离开了HTTP服务器");
+		}
+
+		private void transferFileHandle(String path, Socket client) {
+
+			File fileToSend = new File(path);
+
+			if (fileToSend.exists() && !fileToSend.isDirectory()) {
+				try {
+					PrintStream writer = new PrintStream(client.getOutputStream());
+					writer.println("HTTP/1.0 200 OK");// 返回应答消息,并结束应答
+					writer.println("Content-Type:application/binary");
+					writer.println("Content-Length:" + fileToSend.length());// 返回内容字节数
+					writer.println();// 根据 HTTP 协议, 空行将结束头信息
+
+					FileInputStream fis = new FileInputStream(fileToSend);
+					byte[] buf = new byte[fis.available()];
+					fis.read(buf);
+					writer.write(buf);
+					writer.close();
+					fis.close();
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
 			}
 		}
