@@ -31,8 +31,13 @@ public class Request {
 //		System.out.print(request.toString());
 		
 		if(request.indexOf("POST")!=-1){
-			System.out.println("fileContent : "+request.toString());
+			System.out.println("fileContent : "+request);
 			ispost = true;
+			String[] posts = request.toString().split("\n");
+			String RawSearchQuery = posts[posts.length-1];
+			String SearchQuery = RawSearchQuery.substring(RawSearchQuery.indexOf("=")+1, RawSearchQuery.lastIndexOf("&"));
+			System.out.println(SearchQuery);
+			searchquery = SearchQuery;
 //			int startbody = request.indexOf("WebKitFormBoundary");
 //			int endbody = request.lastIndexOf("WebKitFormBoundary");
 //			String postbody = request.substring(startbody, endbody);
