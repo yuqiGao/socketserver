@@ -59,7 +59,8 @@ public class Response {
 		try {
 			String resource = request.getUri();
 			resource = URLDecoder.decode(resource, "UTF-8");
-
+			System.out.println(resource);
+			
 			if (resource.endsWith(".txt")) {
 				if(status == 1){
 					String errorMessage = "HTTP/1.1 404 File Not Found\r\n" + "Content-Type: text/html\r\n"
@@ -82,17 +83,34 @@ public class Response {
 
 
 
-			} else if (resource.endsWith(".jpg")) {
-				transferFileHandle("images/test.jpg", client);
-			} else if (resource.endsWith(".rmvb")) {
+			}  else if (resource.endsWith(".rmvb")) {
 				transferFileHandle("videos/test.rmvb", client);
-			} else {
-				String errorMessage = "HTTP/1.1 404 File Not Found\r\n" + "Content-Type: text/html\r\n"
-						+ "Content-Length: 23\r\n" + "\r\n" +
-
-						"<h1>File Not Found</h1>";
-				output.write(errorMessage.getBytes());
+			} else if (resource.endsWith("index.html")){
+				transferFileHandleForHTML("webroot/HTML/index.html", client);
+				System.out.println("我还是可以允许到这里wwww");
+			} else if(resource.endsWith(".css")){
+				transferFileHandleForHTML("webroot/HTML"+resource, client);
+			} else if(resource.endsWith(".js")){
+				transferFileHandleForHTML("webroot/HTML"+resource, client);
+			} else if(resource.endsWith(".jpg")){
+				transferFileHandleForHTML("webroot/HTML"+resource, client);
+			} else if(resource.endsWith(".json")){
+				transferFileHandleForHTML("webroot/HTML"+resource, client);
+			}else if(resource.endsWith(".yml")){
+				transferFileHandleForHTML("webroot/HTML"+resource, client);
+			}else if(resource.endsWith(".map")){
+				transferFileHandleForHTML("webroot/HTML"+resource, client);
+			}else{
+				transferFileHandleForHTML("webroot/HTML"+resource, client);
 			}
+			
+//			else {
+//				String errorMessage = "HTTP/1.1 404 File Not Found\r\n" + "Content-Type: text/html\r\n"
+//						+ "Content-Length: 23\r\n" + "\r\n" +
+//
+//						"<h1>File Not Found</h1>";
+//				output.write(errorMessage.getBytes());
+//			}
 		}catch (Exception e) {
 			// thrown if cannot instantiate a File object
 			System.out.println(e.toString());
@@ -136,7 +154,38 @@ public class Response {
 		}
 	}
 
+	private void transferFileHandleForHTML(String path, Socket client) {
 
+		File fileToSend = new File(path);
+		System.out.println(path);
+		System.out.println("path is ~~~~~~" + fileToSend.getAbsolutePath());
+
+		if (fileToSend.exists() && !fileToSend.isDirectory()) {
+			try {
+				PrintStream writer = new PrintStream(client.getOutputStream());
+				writer.println("HTTP/1.0 200 OK");// 返回应答消息,并结束应答
+				writer.println("Content-Type:text/html");
+				writer.println("Content-Length:" + fileToSend.length());// 返回内容字节数
+				writer.println();// 根据 HTTP 协议, 空行将结束头信息
+				FileInputStream fis = new FileInputStream(fileToSend);
+				byte[] buf = new byte[fis.available()];
+				int ch = fis.read(buf, 0, BUFFER_SIZE);
+				while (ch != -1) {
+					writer.write(buf, 0, ch);
+					ch = fis.read(buf, 0, BUFFER_SIZE);
+				}
+				
+				fis.read();
+				writer.write(buf);
+				writer.close();
+				fis.close();
+				
+			} catch (IOException e) {
+				
+				e.printStackTrace();
+			}
+		}
+	}
 
 
 

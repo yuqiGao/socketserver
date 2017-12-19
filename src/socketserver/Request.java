@@ -29,18 +29,19 @@ public class Request {
 			request.append((char) buffer[j]);
 		}
 //		System.out.print(request.toString());
-		System.out.println("fileContent : "+request.toString());
+		
 		if(request.indexOf("POST")!=-1){
+			System.out.println("fileContent : "+request.toString());
 			ispost = true;
-			int startbody = request.indexOf("WebKitFormBoundary");
-			int endbody = request.lastIndexOf("WebKitFormBoundary");
-			String postbody = request.substring(startbody, endbody);
-			String[] posts = postbody.split("\n");
-			String name = posts[6].substring(posts[6].indexOf("\"")+1, posts[6].lastIndexOf("\""));
-			//System.out.println(name);
-			//System.out.println(posts[8]);
-			searchterm = name;
-			searchquery = posts[8];
+//			int startbody = request.indexOf("WebKitFormBoundary");
+//			int endbody = request.lastIndexOf("WebKitFormBoundary");
+//			String postbody = request.substring(startbody, endbody);
+//			String[] posts = postbody.split("\n");
+//			String name = posts[6].substring(posts[6].indexOf("\"")+1, posts[6].lastIndexOf("\""));
+//			//System.out.println(name);
+//			//System.out.println(posts[8]);
+//			searchterm = name;
+//			searchquery = posts[8];
 		}
 		uri = parseUri(request.toString());
 		System.out.println("uri is :" + uri);
