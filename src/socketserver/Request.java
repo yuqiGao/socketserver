@@ -6,6 +6,9 @@ import java.io.InputStream;
 public class Request {
 	private InputStream input;
 	private String uri;
+	private boolean ispost;
+	private String searchterm;
+	private String searchquery;	
 
 	public Request(InputStream input) {
 		this.input = input;
@@ -27,6 +30,18 @@ public class Request {
 		}
 //		System.out.print(request.toString());
 		System.out.println("fileContent : "+request.toString());
+		if(request.indexOf("POST")!=-1){
+			ispost = true;
+			int startbody = request.indexOf("WebKitFormBoundary");
+			int endbody = request.lastIndexOf("WebKitFormBoundary");
+			String postbody = request.substring(startbody, endbody);
+			String[] posts = postbody.split("\n");
+			String name = posts[6].substring(posts[6].indexOf("\"")+1, posts[6].lastIndexOf("\""));
+			//System.out.println(name);
+			//System.out.println(posts[8]);
+			searchterm = name;
+			searchquery = posts[8];
+		}
 		uri = parseUri(request.toString());
 		System.out.println("uri is :" + uri);
 	}
@@ -44,5 +59,29 @@ public class Request {
 
 	public String getUri() {
 		return uri;
+	}
+
+	public boolean isIspost() {
+		return ispost;
+	}
+
+	public void setIspost(boolean ispost) {
+		this.ispost = ispost;
+	}
+
+	public String getSearchterm() {
+		return searchterm;
+	}
+
+	public void setSearchterm(String searchterm) {
+		this.searchterm = searchterm;
+	}
+
+	public String getSearchquery() {
+		return searchquery;
+	}
+
+	public void setSearchquery(String searchquery) {
+		this.searchquery = searchquery;
 	}
 }
